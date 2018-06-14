@@ -8,23 +8,38 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
     public $timestamps = false;
     protected $fillable = [
-        'name', 'email', 'password',
+        'name', 
+        'email', 
+        'password'
+    ];
+    protected $hidden = [
+        'password'
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
-    protected $hidden = [
-        'password', 'remember_token',
-    ];
+    public function role()
+    {
+        return $this->belongsTo(App\Model\Role::class);
+    }
+
+    public function statusUser()
+    {
+        return $this->belongsTo(App\Model\StatusUser::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(App\Model\Comment::class);
+    }
+
+    public function foodUsers()
+    {
+        return $this->hasMany(App\Model\Food::class, 'user_id');
+    }
+
+    public function foods()
+    {
+        return $this->belongsToMany(App\Model\Role::class, 'rates');
+    }
 }
