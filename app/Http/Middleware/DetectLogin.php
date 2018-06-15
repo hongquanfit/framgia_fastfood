@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfAuthenticated
+class DetectLogin
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,11 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
+        // pr($guard);
         if (Auth::guard($guard)->check()) {
-            return redirect('/login');
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect('/login');
     }
 }

@@ -79,7 +79,11 @@
 
             <div class="content">
                 <div class="title m-b-md">
+                @if(Auth::user())
+                    You are login!
+                @else
                     Laravel
+                @endif
                 </div>
 
                 <div class="links">
