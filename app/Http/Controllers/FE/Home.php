@@ -10,6 +10,6 @@ class Home extends Controller
 {
     public function index()
     {
-    	print_r(AddressFood::all());exit;
+    	return view('welcome');
     }
 }

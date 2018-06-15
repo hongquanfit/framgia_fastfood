@@ -12,3 +12,16 @@
 */
 
 Route::get('/', 'FE\Home@index');
+//login
+Route::get('/login', 'Login@showLogin');
+Route::post('/login', 'Login@login')->name('doLogin');
+Route::get('/logout', 'Login@logout');
+//register
+Route::get('/register', 'Login@register');
+Route::post('/doRegister', 'Login@doRegister')->name('doReg');
+//
+Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
+    Route::get('/', function(){
+        return view('welcome');
+    });
+});
