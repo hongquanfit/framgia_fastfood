@@ -17,12 +17,13 @@ class CreateUsersTable extends Migration
             $table->increments('id');
             $table->string('email');
             $table->string('password');
+            $table->string('name');
             $table->string('phone')->nullable();
             $table->string('dob')->nullable();
             $table->string('height')->nullable();
             $table->string('weight')->nullable();
-            $table->integer('role_id')->unsigned();
-            $table->integer('status_user_id')->unsigned();
+            $table->integer('role_id')->default(0)->index('lalaland')->unsigned();
+            $table->integer('status_user_id')->default(1)->index('dragonball')->unsigned();
         });
     }
 
