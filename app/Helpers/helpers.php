@@ -19,6 +19,7 @@ function accountKey($length)
     }
     return $randomString;
 }
+
 function renderStar($score)
 {
     $average = $score / 5;
