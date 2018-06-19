@@ -19,3 +19,31 @@ function accountKey($length)
     }
     return $randomString;
 }
+
+function renderStar($score)
+{
+    $average = $score / 5;
+    $split = explode('.', $average);
+    $star = [];
+
+    if ($split[0]) {
+        for ($i=0; $i<$split[0]; $i++) {
+            $star[] = 'star';
+        }
+
+        if (isset($split[1])) {
+            if ($split[1]<=5) {
+                array_push($star, 'star-half-o');
+            }
+            else{
+                array_push($star, 'star');
+            }
+        }
+    }
+    $n = 5 - count($star);
+    for ($i=0; $i < $n; $i++) {
+        array_push($star, 'star-o');
+    }
+
+    return $star;
+}

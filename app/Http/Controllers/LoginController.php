@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Support\Facades\Auth;
 use App\User;
 
-class Login extends Controller
+class LoginController extends Controller
 {
     use AuthenticatesUsers;
 
@@ -22,7 +22,7 @@ class Login extends Controller
     {
         if ($this->attemptLogin($req)) {
             if (Auth::user()->role_id) {
-                $this->redirectTo = '/admin/';
+                $this->redirectTo = '/admin/type';
                 return $this->sendLoginResponse($req);
             }
 
