@@ -17,9 +17,17 @@ class DetectLogin
      */
     public function handle($request, Closure $next, $guard = null)
     {
-        // pr($guard);
         if (Auth::guard($guard)->check()) {
-            return $next($request);
+            if (Auth::user()->role_id) {
+                return $next($request);
+            }
+            else{
+                if ($request->is('admin/*')) {
+                    return redirect('/nothavepermission');
+                }
+                
+                return $next($request);
+            }
         }
 
         return redirect('/login');

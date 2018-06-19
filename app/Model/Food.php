@@ -17,17 +17,17 @@ class Food extends Model
 
     public function images()
     {
-        return $this->hasMany(App\Model\Image::class);
+        return $this->hasMany(Image::class);
     }
 
     public function comments()
     {
-        return $this->hasMany(App\Model\Comment::class);
+        return $this->hasMany(Comment::class);
     }
 
     public function foodStatus()
     {
-        return $this->belongsTo(App\Model\FoodStatus::class);
+        return $this->belongsTo(FoodStatus::class);
     }
     
     public function foodUser()
@@ -37,17 +37,17 @@ class Food extends Model
 
     public function types()
     {
-        return $this->belongsToMany(App\Model\Type::class);
+        return $this->belongsToMany(Type::class, 'food_types');
     }
 
      public function addresses()
     {
-        return $this->belongsToMany(App\Model\Address::class);
+        return $this->belongsToMany(Address::class, 'address_foods');
     }
 
     public function nutritions()
     {
-        return $this->belongsToMany(App\Model\Nutrition::class);
+        return $this->belongsToMany(Nutrition::class);
     } 
 
     public function users()
