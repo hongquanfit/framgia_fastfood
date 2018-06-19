@@ -15,6 +15,6 @@ class Type extends Model
 
     public function foods()
     {
-        return $this->belongsToMany(App\Model\Food::class);
+        return $this->belongsToMany(Food::class, 'food_types');
     }
 }

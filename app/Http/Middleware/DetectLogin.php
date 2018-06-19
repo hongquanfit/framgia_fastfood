@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfAuthenticated
+class DetectLogin
 {
     /**
      * Handle an incoming request.
@@ -17,10 +17,20 @@ class RedirectIfAuthenticated
      */
     public function handle($request, Closure $next, $guard = null)
     {
+
         if (Auth::guard($guard)->check()) {
-            return redirect('/login');
+            if (Auth::user()->role_id) {
+                return $next($request);
+            }
+            else{
+                if ($request->is('admin/*')) {
+                    return redirect('/nothavepermission');
+                }
+                
+                return $next($request);
+            }
         }
 
-        return $next($request);
+        return redirect('/login');
     }
 }
