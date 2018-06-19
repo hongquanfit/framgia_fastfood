@@ -1,0 +1,10 @@
+{
+    "required": "Please fill the textbox",
+    "same": "The :attribute and the :other are not match",
+    "email": "Email is not in correct type",
+    "between": "The :attribute must be between :min - :max",
+    "successReg": "Your account is ready. Login now!",
+    "loginFail": "It seems like your password or email you have enter is not correct. Please try again!",
+    "regFail": "Your email you have entered is already in use. Please use another!",
+    "notAdmin": "Sorry! You are not the Admin so you cannot access this page"
+}
