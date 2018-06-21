@@ -3,7 +3,7 @@
 <link rel="stylesheet" type="text/css" href="{{ asset('public/js/plugins/nestable/css/style2.css') }}">
 <div class="panel panel-success">
     <div class="panel-heading">
-        <h2 class="panel-title">Here is some type of all the food will display</h2>
+        <h2 class="panel-title">{{ __('typeAdminTitle') }}</h2>
     </div>
     <div class="panel-body">
         <div class="container">
@@ -12,13 +12,13 @@
                 <table class="table table-bordered table-hover mb-1" >
                     <thead>
                         <td></td>
-                        <td class="text-center">STT</td>
+                        <td class="text-center">Order</td>
                         <td>Type</td>
                         <td class="text-center">In Use</td>
                         <td class="text-center">Options</td>
                     </thead>
                     <tbody class="dd-list">
-                        @foreach($itemType as $key => $item)
+                        @foreach($listType as $key => $item)
                         <tr class="dd-item" data-id="{{ $key+1 }}">
                             <td class="dd-handle"><i class="fa fa-minus"></i></td>
                             <td class="text-center">{{ $key+1 }}</td>
@@ -42,15 +42,15 @@
         <div class="mb-middle">
             <div class="mb-title"><span class="fa fa-sign-out"></span><strong>Delete</strong> ?</div>
             <div class="mb-content">
-                <p>This action will remove type info from <span id="warn" class="label label-danger"></span> foods product.</p>                
-                <p>Are you sure you want to delete this?</p>
+                <p>{{ __('warningRemoveType1') }} <span id="warn" class="label label-danger"></span> {{ __('warningRemoveType2') }}</p>                
+                <p>{{ __('askDelete') }}</p>
             </div>
             <div class="mb-footer">
                 <div class="pull-right">
                 <form action="{{ route('type.confirm') }}" method="post">
                     {{ csrf_field() }}
-                    <button type="submit" name="typeId" class="btn btn-success btn-lg">Yes</button>
-                    <button type="button" class="btn btn-default btn-lg mb-control-close">No</button>
+                    <button type="submit" name="typeId" class="btn btn-success btn-lg">{{ __('yes') }}</button>
+                    <button type="button" class="btn btn-default btn-lg mb-control-close">{{ __('no') }}</button>
                 </form>
                 </div>
             </div>

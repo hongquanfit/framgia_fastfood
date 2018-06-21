@@ -21,6 +21,7 @@
     "jquery": "https://github.com/jquery/jquery.git#^3.3.1",
     "font-icons-trungquan17": "https://github.com/trungquan17/font-icons.git",
     "AlertifyJS": "https://github.com/MohammadYounes/AlertifyJS.git#^1.11.0",
-    "eonasdan-bootstrap-datetimepicker": "^4.17.47"
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "select2": "https://github.com/select2/select2.git#^4.0.5"
   }
 }

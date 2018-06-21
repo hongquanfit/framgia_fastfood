@@ -13,6 +13,7 @@ class Food extends Model
         'city', 
         'total_score', 
         'rate_times',
+        'user_id',
     ];
 
     public function images()
@@ -32,7 +33,7 @@ class Food extends Model
     
     public function foodUser()
     {
-        return $this->belongsTo(User::class,'user_id');
+        return $this->belongsTo('App\User','user_id');
     }
 
     public function types()
@@ -52,6 +53,6 @@ class Food extends Model
 
     public function users()
     {
-        return $this->belongsToMany(User::class, 'rates');
+        return $this->belongsToMany('App\User', 'rates');
     }
 }

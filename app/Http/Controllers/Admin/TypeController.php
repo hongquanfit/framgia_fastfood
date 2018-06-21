@@ -13,7 +13,7 @@ class TypeController extends Controller
         $listType = Mtype::all()->toArray();
         $listType = collect($listType);
         $data['listType'] = $listType->sortBy('orders')->values()->all();
-
+        
         return view('Admin.Type', $data);
     }
 

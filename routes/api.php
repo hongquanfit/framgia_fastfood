@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use App\Model\Food;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +16,7 @@ use Illuminate\Http\Request;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::get('/findSomeFood/{food}', function($food){
+    return Food::where('food', 'like', "%$food%")->with('addresses')->with('images')->get();
 });

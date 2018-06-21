@@ -20,30 +20,46 @@ function accountKey($length)
     return $randomString;
 }
 
-function renderStar($score)
+function renderStar($score, $times)
 {
-    $average = $score / 5;
-    $split = explode('.', $average);
-    $star = [];
+    if ($score != 0 && $times != 0) {
+        $average = $score / $times;
+        $split = explode('.', $average);
+        $star = [];
 
-    if ($split[0]) {
-        for ($i=0; $i<$split[0]; $i++) {
-            $star[] = 'star';
-        }
+        if ($split[0]) {
+            for ($i = 0; $i < $split[0]; $i++) {
+                $star[] = 'star';
+            }
 
-        if (isset($split[1])) {
-            if ($split[1]<=5) {
-                array_push($star, 'star-half-o');
-            }
-            else{
-                array_push($star, 'star');
+            if (isset($split[1])) {
+                if ($split[1] <= 5) {
+                    array_push($star, 'star-half-o');
+                } else {
+                    array_push($star, 'star');
+                }
             }
         }
-    }
-    $n = 5 - count($star);
-    for ($i=0; $i < $n; $i++) {
-        array_push($star, 'star-o');
+        $n = 5 - count($star);
+        for ($i = 0; $i < $n; $i++) {
+            array_push($star, 'star-o');
+        }
+    } else {
+        $star = [
+            'star-o',
+            'star-o',
+            'star-o',
+            'star-o',
+            'star-o',
+        ];
     }
 
     return $star;
+}
+
+function checkCharacter($word)
+{
+    $matched = preg_match('/[^A-Za-z0-9]+/', $word) ? false : true;
+
+    return $matched;
 }
