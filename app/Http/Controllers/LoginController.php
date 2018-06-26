@@ -34,7 +34,7 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         $request->session()->invalidate();
-        return redirect('/login');
+        return redirect('/');
     }
 
     public function register()
@@ -57,6 +57,7 @@ class LoginController extends Controller
         ];
         $validation = $req->validate($rules, $messages);
         $detectAccount = User::where('email', $req->email)->first();
+
         if ($detectAccount) {
             return back()->with('wrong', ' ');
         }
@@ -64,6 +65,7 @@ class LoginController extends Controller
             'password'=>bcrypt($req->password_confirmation),
         ]);
         $affectedRows = User::create($req->all());
+        
         if ($affectedRows) {
             return redirect('/login')->with('success',' ');
         }        

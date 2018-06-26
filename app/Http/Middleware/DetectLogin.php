@@ -29,7 +29,12 @@ class DetectLogin
                 return $next($request);
             }
         }
+        
+        if ($request->ajax()) {
+            echo 'ajax';
+            exit;
+        }
 
-        return redirect('/login');
+        return redirect('/login');        
     }
 }

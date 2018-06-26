@@ -11,14 +11,15 @@
 |
 */
 
-Route::get('/', 'FE\Home@index');
+Route::get('/', 'FE\HomeController@index');
+Route::get('/search/{by?}/{id?}/', 'FE\HomeController@searchByType');
 //login
-Route::get('/login', 'Login@showLogin');
-Route::post('/login', 'Login@login')->name('doLogin');
-Route::get('/logout', 'Login@logout');
+Route::get('/login', 'LoginController@showLogin');
+Route::post('/login', 'LoginController@login')->name('doLogin');
+Route::get('/logout', 'LoginController@logout');
 //register
-Route::get('/register', 'Login@register');
-Route::post('/doRegister', 'Login@doRegister')->name('doReg');
+Route::get('/register', 'LoginController@register');
+Route::post('/doRegister', 'LoginController@doRegister')->name('doReg');
 //go back
 Route::get('/nothavepermission', function(){
 	return view('welcome');
@@ -28,11 +29,27 @@ Route::get('/goback', function(){
 });
 Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
     //type
-    Route::group(['prefix'=>'type'], function(){
-    	Route::get('/', 'Admin\Type@getType');
-    	Route::post('/editType','Admin\Type@doEdit');
-    	Route::post('/sort', 'Admin\Type@sort');
-    	Route::post('/detectID', 'Admin\Type@detectID');
-    	Route::post('/confirmdelete', 'Admin\Type@confirmDelete')->name('type.confirm');
+    Route::group(['prefix' => 'type'], function(){
+    	Route::get('/', 'Admin\TypeController@getType');
+    	Route::post('/editType','Admin\TypeController@doEdit');
+    	Route::post('/sort', 'Admin\TypeController@sort');
+    	Route::post('/detectID', 'Admin\TypeController@detectID');
+    	Route::post('/confirmdelete', 'Admin\TypeController@confirmDelete')->name('type.confirm');
     });
+
+    Route::group(['prefix' => 'food'], function(){
+        Route::get('/', 'Admin\FoodController@getListFood');
+        Route::post('/editname', 'Admin\FoodController@editName');
+        Route::post('/changeAvatar', 'Admin\FoodController@changeAvatar');
+        Route::post('/edittype', 'Admin\FoodController@editType');
+        Route::post('/changeStatus', 'Admin\FoodController@changeStatus');
+        Route::get('/sort/{type?}/{rate?}/{status?}', 'Admin\FoodController@sortBy');
+    });
+});
+//Frontend
+
+
+Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
+    Route::post('/suggestfood', 'FE\HomeController@doSuggest')->name('suggest');
+    Route::post('/rating', 'FE\RatingController@rateFood');
 });

@@ -6,15 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Address extends Model
 {
-    public $timestamp = false;
+    public $timestamps = false;
     protected $fillable = [
-    	'id', 
-    	'address', 
-    	'phone',
+        'id',
+        'address',
+        'price',
+        'phone',
     ];
 
     public function foods()
     {
-        return $this->belongsToMany(App\Model\Food::class);
+        return $this->belongsToMany(Food::class);
     }
 }

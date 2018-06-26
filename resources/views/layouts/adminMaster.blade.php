@@ -8,13 +8,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- <base > -->
     <link rel="stylesheet" type="text/css" href="{{asset('public/css/theme-default.css')}}">
-    <!-- <link rel="stylesheet" type="text/css" href="{{asset('public/js/plugins/jquery/jquery.min.js')}}"> -->
+    <link rel="stylesheet" href="{{ asset('public/js/plugins/icheckbox/skins/flat/red.css') }}">
+    <link rel="stylesheet" href="{{ asset('public/assets/select2/dist/css/select2.min.css') }}" >
     <script type="text/javascript" src="{{asset('public/js/plugins/jquery/jquery.min.js')}}"></script>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('base').attr('token')
+            }
+        });
+    </script>
 </head>
 <body style="height: ">
-<div class="page-container">
+<div class="page-container page-navigation-toggled page-container-wide">
     <div class="page-sidebar">
-        <ul class="x-navigation">
+        <ul class="x-navigation x-navigation-minimized">
             <li class="xn-logo">
                 <a href="#">BLA</a>
                 <a href="#" class="x-navigation-control"></a>
@@ -28,16 +36,21 @@
                     </div>
                 </div>
             </li>
-            <li>
-                <a href="#">
-                    <i class="fa fa-list"></i>
-                    <span class="xn-text">Food Types</span>
+            <li class="xn-profile">
+                <a href="#" class="profile-mini">
+                    <img src="{{ asset('public/images/user.png') }}" alt="John Doe">
                 </a>
             </li>
-            <li>
-                <a href="#">
+            <li data-toggle-tooltip="tooltip" title="Type List" data-placement="right">
+                <a href="{{ url('admin/type') }}">
                     <i class="fa fa-list"></i>
-                    <span class="xn-text">List Foods</span>
+                    <span class="xn-text">{{ __('foodTypes') }}</span>
+                </a>
+            </li>
+            <li data-toggle-tooltip="tooltip" title="Food List" data-placement="right">
+                <a href="{{ url('admin/food') }}">
+                    <i class="fa fa-list"></i>
+                    <span class="xn-text">{{ __('typeAdminTitle') }}</span>
                 </a>
             </li>
         </ul>
@@ -61,13 +74,13 @@
         <div class="mb-middle">
             <div class="mb-title"><span class="fa fa-sign-out"></span> Log <strong>Out</strong> ?</div>
             <div class="mb-content">
-                <p>Are you sure you want to log out?</p>                    
-                <p>Press No if youwant to continue work. Press Yes to logout current user.</p>
+                <p>{{ __('confirmLogout') }}</p>                    
+                <p>{{ __('confirmLogout2') }}</p>
             </div>
             <div class="mb-footer">
                 <div class="pull-right">
-                    <a href="{{ url('/logout') }}" class="btn btn-success btn-lg">Yes</a>
-                    <button class="btn btn-default btn-lg mb-control-close">No</button>
+                    <a href="{{ url('/logout') }}" class="btn btn-success btn-lg">{{ __('yes') }}</a>
+                    <button class="btn btn-default btn-lg mb-control-close">{{ __('no') }}</button>
                 </div>
             </div>
         </div>
@@ -82,6 +95,7 @@
 <script type="text/javascript" src="{{asset('public')}}/js/plugins/bootstrap/bootstrap-datepicker.js"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/plugins/bootstrap/bootstrap-timepicker.min.js"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/plugins/datatables/jquery.dataTables.min.js"></script> 
+<script src="{{ asset('public/assets/select2/dist/js/select2.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/plugins.js"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/actions.js"></script>
 @if(session('success'))
