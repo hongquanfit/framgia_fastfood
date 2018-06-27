@@ -28,15 +28,9 @@ class HomeController extends Controller
             $food[$key]['rateStar'] = renderStar($item['total_score'], $item['rate_times']);
         }
 
-        $type = Type::all()->toArray();
-        foreach ($type as $key => $value) {
-            $newType[$value['id']] = $value['types'];
-        }
-
         $data['headItem'] = array_shift($food);
         $data['listItem'] = $food;
-        $data['selectType'] = $newType;
-        $data['listType'] = $type;
+        $data['listType'] = Type::all()->toArray();
         $data['allowHeadBoard'] = true;
         
         return view('FE.home', $data);
@@ -68,6 +62,9 @@ class HomeController extends Controller
 
     public function doSuggest(Request $req)
     {
+        if (!checkCharacter($req->food)) {
+            return back()->with('fail', __('You have entered a not allow character'));
+        }
         $req->merge([
             'user_id' => Auth::user()->id,
         ]);

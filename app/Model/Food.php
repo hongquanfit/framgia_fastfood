@@ -51,8 +51,21 @@ class Food extends Model
         return $this->belongsToMany(Nutrition::class);
     } 
 
-    public function users()
+    public function rates()
     {
-        return $this->belongsToMany('App\User', 'rates');
+        return $this->belongsToMany('App\User', 'rates')->withPivot('score', 'time');
+    }
+
+    //scope
+    public function scopeToShowDetails($query, $foodId)
+    {
+        return $query->where('id', $foodId)->with([
+            'types',
+            'addresses',
+            'images',
+            'foodStatus',
+            'foodUser',
+            'comments',
+        ]);
     }
 }
