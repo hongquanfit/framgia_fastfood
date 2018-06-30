@@ -16,6 +16,7 @@
     <script src="{{ asset('public/js/plugins/jquery/jquery.min.js') }}" ></script>
     <script src="{{ asset('public/js/plugins/jquery/jquery-ui.min.js') }}" ></script>
     <script type="text/javascript">
+        var baseUrl = $('base').attr('href');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('base').attr('token')

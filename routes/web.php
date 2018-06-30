@@ -12,6 +12,8 @@
 */
 
 Route::get('/', 'FE\HomeController@index');
+Route::get('/details/{info?}', 'FE\DetailsController@show');
+
 Route::get('/search/{by?}/{id?}/', 'FE\HomeController@searchByType');
 //login
 Route::get('/login', 'LoginController@showLogin');
@@ -52,4 +54,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
 Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
     Route::post('/suggestfood', 'FE\HomeController@doSuggest')->name('suggest');
     Route::post('/rating', 'FE\RatingController@rateFood');
+    Route::post('/comment', 'FE\RatingController@comment');
+    Route::post('/addAdr', 'FE\DetailsController@addAddress')->name('user.addAdr');
 });

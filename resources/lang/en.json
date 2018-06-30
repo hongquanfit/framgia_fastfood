@@ -6,6 +6,7 @@
     "successReg": "Your account is ready. Login now!",
     "loginFail": "It seems like your password or email you have enter is not correct. Please try again!",
     "regFail": "Your email you have entered is already in use. Please use another!",
+    "mustLogin": "You must login first!",
     "confirmLogout": "Are you sure you want to log out?",
     "confirmLogout2": "Press No if you want to continue work. Press Yes to logout current user.",
     "notAdmin": "Sorry! You are not the Admin so you cannot access this page",
@@ -51,5 +52,12 @@
     "choose1": "Choose food types first",
     "choose2": "Random with types you choose",
     "choose3": "No! I'll do it myself",
-    "goback": "Or go back"
+    "goback": "Or go back",
+    "details": "Details",
+    "rate": "Rate",
+    "comments": "Comments",
+    "addresses": "Addresses",
+    "addAdr": "Add Address",
+    "add": "Add",
+    "addedBy": "Added By"
 }

@@ -12,6 +12,10 @@ class Address extends Model
         'address',
         'price',
         'phone',
+        'total_score',
+        'rate_times',
+        'avatar',
+        'user_id',
     ];
 
     public function foods()

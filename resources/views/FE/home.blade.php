@@ -32,10 +32,10 @@
             @foreach($headItem['rateStar'] as $s)
                 <i class="fa fa-{{ $s }} mr-1"></i>
             @endforeach
-                <i class="ml-3 rating-line">{{ $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} Rate</i></p>
+                <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i></p>
             <p class="price-line"><i class="fa fa-money mr-3 "></i> 35.000 VND</p>      
                 <blockquote class="blockquote m-1">
-                    <a class="text-info" href="#"><p class="mb-0 text-info"><i class="fa fa-map-marker"></i> Address:</p></a>
+                    <a class="text-info" href="#"><p class="mb-0 text-info"><i class="fa fa-map-marker"></i> {{ __('addresses') }}:</p></a>
                     @if($headItem['addresses'])
                         @foreach($headItem['addresses'] as $v)
                             <footer class="blockquote-footer">{{ $v['address'] }}</footer>
@@ -90,7 +90,7 @@
                             <h4 class="mb-1 card-title food-title">{{ $item['food'] }}</h4>
                             <p class="mb-2 card-text">{{ $item['description'] ? $item['description'] : '&nbsp;' }}</p>
                             <p class="mb-2 price-line"><i class="fa fa-money mr-3 "></i> 35.000 VND</p>
-                            <p class="mb-0">
+                            <p class="mb-0 star-line">
                                 @if(Auth::user())
                                 <span class="vote-frame" food="{{ $item['id'] }}">
                                     <span class="vote-frame-main">
@@ -118,9 +118,10 @@
                                     </span>
                                 </a>
                                 @endif
-                                <i class="ml-3 rating-line">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} Rate</i></p>
+                                <i class="ml-3 rating-line">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
                             </p>
-                            <p class="text-center mb-0 mt-3"><button class="btn btn-outline-info" value="{{ $item['id'] }}"><i class="fa fa-map-marker"></i> Give me Address</button></p>
+                            <small class="text-success" id="infoSaveComment_{{ $item['id'] }}"></small>
+                            <p class="text-center mb-0 mt-3"><a class="btn btn-outline-info" target="_blank()" href="{{ url('/details/') }}/{{ str_slug($item['food']) }}_{{ $item['id'] }}"><i class="fa fa-map-marker"></i> {{ __('details') }}</a></p>
                       </div>
                     </div>
                 </div>
