@@ -56,6 +56,11 @@ class Food extends Model
         return $this->belongsToMany('App\User', 'rates')->withPivot('score', 'time');
     }
 
+    public function favorites()
+    {
+        return $this->belongsToMany('App\User', 'favorites');
+    }
+
     //scope
     public function scopeToShowDetails($query, $foodId)
     {
@@ -67,5 +72,24 @@ class Food extends Model
             'foodUser',
             'comments',
         ]);
+    }
+
+    public function scopeToGetListFood($query, $orderCol, $orderType, $byList = [])
+    {
+        if ($byList) {
+            $query = $query->whereIn('id', $byList);
+        }
+
+        return $query->whereHas('foodStatus', function($query){
+                        $query->where('status', 'Displaying');
+                    })->orderBy($orderCol, $orderType)
+                    ->with('types:types')
+                    ->with('addresses')
+                    ->with('images')
+                    ->with(['favorites' => function($query){
+                        $query->where('user_id', auth()->user() ? auth()->user()->toArray()['id'] : 'nobody');
+                    }])
+                    ->take(config('app.limitHomepage'))
+                    ->get();
     }
 }

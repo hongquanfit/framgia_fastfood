@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{{ asset('public/assets/select2/dist/css/select2.min.css') }}" >
     <script type="text/javascript" src="{{asset('public/js/plugins/jquery/jquery.min.js')}}"></script>
     <script type="text/javascript">
+        var baseUrl = $('base').attr('href');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('base').attr('token')
@@ -41,16 +42,22 @@
                     <img src="{{ asset('public/images/user.png') }}" alt="John Doe">
                 </a>
             </li>
-            <li data-toggle-tooltip="tooltip" title="Type List" data-placement="right">
+            <li data-toggle-tooltip="tooltip" title="{{ __('typeAdminTitle') }}" data-placement="right">
                 <a href="{{ url('admin/type') }}">
                     <i class="fa fa-list"></i>
-                    <span class="xn-text">{{ __('foodTypes') }}</span>
+                    <span class="xn-text"></span>
                 </a>
             </li>
-            <li data-toggle-tooltip="tooltip" title="Food List" data-placement="right">
+            <li data-toggle-tooltip="tooltip" title="{{ __('foodAdminTitle') }}" data-placement="right">
                 <a href="{{ url('admin/food') }}">
                     <i class="fa fa-list"></i>
-                    <span class="xn-text">{{ __('typeAdminTitle') }}</span>
+                    <span class="xn-text"></span>
+                </a>
+            </li>
+            <li data-toggle-tooltip="tooltip" title="{{ __('setupHomepage') }}" data-placement="right">
+                <a href="{{ url('admin/food') }}#setupHomepage">
+                    <i class="fa fa-list"></i>
+                    <span class="xn-text">{{ __('setupHomepage') }}</span>
                 </a>
             </li>
         </ul>

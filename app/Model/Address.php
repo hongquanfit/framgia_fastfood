@@ -22,4 +22,9 @@ class Address extends Model
     {
         return $this->belongsToMany(Food::class);
     }
+
+    public function rates()
+    {
+        return $this->belongsToMany('App\User', 'address_rates');
+    }
 }

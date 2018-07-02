@@ -46,7 +46,14 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
         Route::post('/edittype', 'Admin\FoodController@editType');
         Route::post('/changeStatus', 'Admin\FoodController@changeStatus');
         Route::get('/sort/{type?}/{rate?}/{status?}', 'Admin\FoodController@sortBy');
+        Route::post('/getAddress', 'Admin\FoodController@getAddress');
+        Route::post('/editAddress', 'Admin\FoodController@editAddress');
     });
+
+    Route::group(['prefix' => 'setup'], function(){
+        Route::get('/', 'Admin\SetupController@index');
+    });
+
 });
 //Frontend
 
@@ -54,6 +61,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
 Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
     Route::post('/suggestfood', 'FE\HomeController@doSuggest')->name('suggest');
     Route::post('/rating', 'FE\RatingController@rateFood');
-    Route::post('/comment', 'FE\RatingController@comment');
+    Route::post('/addFavorite', 'FE\RatingController@addFavorite');
     Route::post('/addAdr', 'FE\DetailsController@addAddress')->name('user.addAdr');
+    Route::post('/addComment', 'FE\DetailsController@addComment');
 });

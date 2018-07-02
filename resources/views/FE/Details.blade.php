@@ -33,7 +33,7 @@
                         <i class="fa fa-{{ $s }} mr-1"></i>
                     @endforeach
                         <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i></p>
-                    <p class="comment-line"><a href="{{ url('/details/') }}/{{ str_slug($headItem['food']) }}_{{ $headItem['id'] }}#"><i class="fa fa-comments-o mr-3"></i> {{ $headItem['countComment'] }} {{ __('comments') }}</a></p>
+                    <p class="comment-line"><a href="{{ url('/details/') }}/{{ str_slug($headItem['food']) }}_{{ $headItem['id'] }}#commentSection"><i class="fa fa-comments-o mr-3"></i> {{ $headItem['countComment'] }} {{ __('comments') }}</a></p>
                     <p class="price-line font-16"><i class="fa fa-money mr-3 "></i> {{ $headItem['price'] }} VND</p>
                 </div>
             </div>
@@ -45,11 +45,11 @@
         <div class="card-header">
             <h3 class="card-title">{{ __('addresses') }}</h3>
         </div>
-        <div class="card-body">
+        <div class="card-body" id="bodyDetails">
             <div class="row">
-                @foreach($headAddress as $address)
+                @foreach($headAddress as $k => $address)
                 <div class="col-lg-3 mb-4">
-                    <div class="card">
+                    <div class="card address-list">
                         @if ($address['avatar'])
                         <img class="card-img-top img-thumbnail mx-auto d-block fixed-size img-fluid" src="{{ asset('public/images') }}/{{ $address['avatar'] }}" alt="{{ $address['address'] }}">
                         @else
@@ -60,7 +60,7 @@
                             <p class="mb-2 price-line font-13"><i class="fa fa-money mr-2"></i> {{ number_format($address['price'], 0) }} VND</p>
                             <p class="mb-0 star-line">
                                 @if(Auth::user())
-                                <span class="vote-frame" food="{{ $address['id'] }}">
+                                <span class="vote-frame" data-vote-item="{{ $address['id'] }}">
                                     <span class="vote-frame-main">
                                 @foreach ($address['rateStar'] as $s)
                                     <i class="fa fa-{{ $s }} mr-1"></i>
@@ -68,7 +68,7 @@
                                     </span>
                                     <span class="vote-frame-o-star hide">
                                     @for($i = 0; $i < 5; $i++)
-                                        <i class="fa fa-star-o mr-1 vote-star" level="{{ $i+1 }}"></i>
+                                        <i class="fa fa-star-o mr-1 vote-star" data-vote-type="address" level="{{ $i+1 }}"></i>
                                     @endfor
                                     </span>
                                 </span>
@@ -88,10 +88,83 @@
                                 @endif
                                 <i class="ml-3 rating-line">{{ ($address['rate_times'] == 0) ? '0' : $address['total_score']/$address['rate_times'] }} / {{ $address['rate_times'] }} {{ _('rate') }}</i></p>
                             </p>
+                            <p class="comment-line"><a href="javascript:void(0)" id="openAdrComtBox"><i class="fa fa-comments-o mr-3"></i> {{ $address['countAdrComt'] }} {{ __('comments') }}</a></p>
                             <p class="suggest-line"><i class="fa fa-plus-square-o mr-2"></i> {{ __('addedBy') }} <b class="text-info">{{ $address['whoAdded'] ? $address['whoAdded']['name'] : '???' }}</b></p>
+
+                            @if(Auth::user())
+                                @if(Auth::user()->role_id)
+                                <p class="text-center mb-0"><a href="" class="btn btn-outline-danger btn-sm">{{ __('deleteItem') }}</a></p>
+                                @endif
+                            @endif
                         </div>
                     </div>
-                </div>
+                    @if(($k + 1) % 3 == 0 || ($k + 1) % 4 == 0)
+                    <div class="arrow_box-right card-parent display-comment hide">
+                    @else
+                        <div class="arrow_box-left card-parent display-comment hide">
+                    @endif
+                            <p class="text-right mb-0"><span class="btnHideWindow">&times;</span></p>
+                            <div class="row p-0 m-0">
+                                <div class="col-lg-3 p-0">
+                                <p class="text-right pr-2">
+                                @php
+                                    $currentAdrStar = 5;
+                                @endphp
+
+                                @for($i = 0; $i < 5; $i++)
+                                    <span class="font-10">
+                                        @for($j = $i; $j < 5; $j++)
+                                        <i class="fa fa-star"></i>
+                                        @endfor
+
+                                        @if(isset($address['countScore'][$currentAdrStar]))
+                                        <kbd>{{ $address['countScore'][$currentAdrStar] }}</kbd>
+                                        @else
+                                        <kbd>0</kbd>
+                                        @endif
+                                    </span>
+                                    <br>
+                                    @php
+                                        $currentAdrStar--;
+                                    @endphp
+                                @endfor
+                                </p>
+                                </div>
+                                <div class="col-lg-9 p-0">
+                                    @if(Auth::user())
+                                    <div class="form-group">
+                                        <input type="text" name="editCommentAddressArea" data-address-id="{{ $address['id'] }}" placeholder="{{ __('addComment') }}" class="form-control">
+                                        <span class="notiAddComment"></span>
+                                    </div>
+                                    @else
+                                    <p class="text-center">
+                                        <a href="{{ url('login') }}" class="btn btn-outline-info">{{ __('loginToComment') }}</a>
+                                    </p>
+                                    @endif
+                                    <div class="col-lg-12 p-0 commentLine">
+                                        @foreach($address['adrComment'] as $adrCmt)
+                                        <div class="col-lg-12  pb-2 border-comment">
+                                            <p class="mb-1"><b class="text-info">{{ $adrCmt['user']['name'] }}</b> | 
+                                            @if($adrCmt['score'])
+                                                <span class="text-warning">{{ $adrCmt['score'] }} <i class="fa fa-star"></i></span>
+                                            @else
+                                                <span class="no-vote">{{ __('noVote') }}</span>
+                                            @endif
+                                            @if(Auth::user())
+                                                @if(Auth::user()->role_id)
+                                                    <span data-toggle-tooltip="tooltip" title="{{ __('deleteItem') }}" class="float-right"><a title="" class="btn btn-xs btn-outline-danger remove-comment-btn font-10"><i class="fa fa-trash-o"></i></a></span>
+                                                @endif
+                                            @endif
+                                            </p>
+                                            <footer class="blockquote-footer font-comment">{{ $adrCmt['comment'] }}</footer>
+                                            <p><small class="float-right">{{ date('H:i, d/m/Y', $adrCmt['time']) }}</small></p>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 @endforeach
                 <div class="col-lg-3 mb-4">
                     <div class="add-icon-box" data-toggle-tooltip="tooltip" title="{{ __('addAdr') }}" data-toggle="modal" data-target="#modalAddAdr">
@@ -100,20 +173,65 @@
                 </div>
             </div>
             <hr>
-            <div class="row p-3">
+            <div class="row p-3" id="commentSection">
                 <div class="col-lg-12">
                     <p><h3>{{ __('rate') }} & {{ __('comments') }}</h3></p>
                 </div>
                 <div class="col-lg-12">
-                    <div class="col-lg-3">
-                        @for($i = 0; $i < 5; $i++)
-                            <p class="text-right">
-                                @for($j = $i; $j < 5; $j++)
-                                <i class="fa fa-star mr-2"></i>
-                                @endfor
-                                <kbd class="font-14">4</kbd>
+                    <div class="row">
+                        <div class="col-lg-3">
+                        @php
+                            $currentStar = 5;
+                        @endphp
+                            @for($i = 0; $i < 5; $i++)
+                                <p class="text-right">
+                                    @for($j = $i; $j < 5; $j++)
+                                    <i class="fa fa-star mr-2"></i>
+                                    @endfor
+                                    @if(isset($countScore[$currentStar]))
+                                        <kbd class="font-14">{{ $countScore[$currentStar] }}</kbd>
+                                    @else
+                                        <kbd class="font-14">0</kbd>
+                                    @endif
+                                    @php
+                                        $currentStar--
+                                    @endphp
+                                </p>
+                            @endfor
+                        </div>
+                        <div class="col-lg-9">
+                            @if(Auth::user())
+                            <div class="form-group">
+                                <textarea name="editCommentArea" class="form-control" placeholder="{{ __('addComment') }}"></textarea>
+                                <span class="notiAddComment"></span>
+                                <button type="button" id="btnAddComt" value="{{ $headItem['id'] }}" class="btn btn-outline-success btn-sm float-right mt-2"><i class="fa fa-check"></i> {{ __('Add Comment') }}</button>
+                            </div>
+                            @else
+                            <p class="text-center">
+                                <a href="{{ url('login') }}" class="btn btn-outline-info">{{ __('loginToComment') }}</a>
                             </p>
-                        @endfor
+                            @endif
+                            <div class="col-lg-12 mt-5 p-0 commentLine">
+                            @foreach($listComments as $item)
+                                <div class="col-lg-12 pt-2 pb-2 border-comment">
+                                    <p class="mb-1"><b class="text-info">{{ $item['whoCommented'] }}</b> | 
+                                    @if(isset($item['rate']))
+                                    <span class="text-warning">{{ $item['rate'] }} <i class="fa fa-star"></i></span>
+                                    @else
+                                    <span class="no-vote">{{ __('noVote') }}</span>
+                                    @endif
+                                    @if(Auth::user())
+                                        @if(Auth::user()->role_id)
+                                            <span data-toggle-tooltip="tooltip" title="{{ __('deleteItem') }}" class="float-right"><a title="" class="btn btn-xs btn-outline-danger remove-comment-btn font-10"><i class="fa fa-trash-o"></i></a></span>
+                                        @endif
+                                    @endif
+                                    </p>
+                                    <footer class="blockquote-footer font-comment">{{ $item['comment'] }}</footer>
+                                    <p><small class="float-right">{{ date('H:i, d/m/Y', $item['time']) }}</small></p>
+                                </div>
+                            @endforeach
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,7 +255,6 @@
                                 <div class="col-lg-8">
                                     <label>{{ __('address') }} & {{ __('price') }}:</label>
                                     <input type="text" name="address" class="form-control add-address" placeholder="{{ __('address') }}">
-                                    <!-- <p></p> -->
                                     <div class="address-found-box">
                                     </div>
                                     <div class="row pt-1 pl-3 pl-3 mb-3">
