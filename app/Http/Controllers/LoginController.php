@@ -20,11 +20,15 @@ class LoginController extends Controller
 
     public function login(Request $req)
     {
+
         if ($this->attemptLogin($req)) {
             if (Auth::user()->role_id) {
                 $this->redirectTo = '/admin/type';
+
                 return $this->sendLoginResponse($req);
             }
+
+            $this->redirectTo = session('oldAccessUrl') ? session('oldAccessUrl') : '/';
 
             return $this->sendLoginResponse($req);
         }

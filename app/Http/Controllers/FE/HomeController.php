@@ -10,30 +10,42 @@ use App\Model\Type;
 use App\Model\Address;
 use App\Model\Image;
 use App\Model\FoodType;
+use App\Model\Homepage;
+use App\Model\Favorite;
 
 class HomeController extends Controller
 {
     public function index($typeId=null)
     {
-        $food = Food::whereHas('foodStatus', function($query){
-                        $query->where('status', 'Displaying');
-                    })->orderBy('total_score', 'DESC')
-                    ->with('types:types')
-                    ->with('addresses')
-                    ->with('images')
-                    ->get()
-                    ->toArray();
-                    
-        foreach ($food as $key => $item) {
-            $food[$key]['rateStar'] = renderStar($item['total_score'], $item['rate_times']);
-        }
+        $homepage = Homepage::getOptions();
+        $food = Food::toGetListFood('total_score', 'DESC')->toArray();
+        $foodNewest = Food::toGetListFood('create_at', 'DESC')->toArray();
+        $favoriteFood = Favorite::where('user_id', Auth::user()->id)->get()->pluck('food_id')->toArray();
+        $favoriteList = Food::toGetListFood('total_score', 'DESC', $favoriteFood)->toArray();
+        $food = $this->renderArrayFood($food);
+        $food = collect($food)->sortByDesc('avrRate')->toArray();
+        $foodNewest = $this->renderArrayFood($foodNewest);
+        $favoriteList = $this->renderArrayFood($favoriteList);
 
         $data['headItem'] = array_shift($food);
         $data['listItem'] = $food;
         $data['listType'] = Type::all()->toArray();
-        $data['allowHeadBoard'] = true;
+        $data['foodNewest'] = $foodNewest;
+        $data['favoriteList'] = $favoriteList;
+        $data['allowHeadBoard'] = $homepage['banner']['display'];
+        $data['allowBottom'] = true;
         
         return view('FE.home', $data);
+    }
+
+    public function renderArrayFood($food)
+    {
+        foreach ($food as $key => $item) {
+            $food[$key]['rateStar'] = renderStar($item['total_score'], $item['rate_times']);
+            $food[$key]['avrRate'] = ($item['rate_times'] == 0) ? 0 : $item['total_score'] / $item['rate_times'];
+        }
+
+        return $food;
     }
 
     public function searchByType($by = null, $id = null)
@@ -54,6 +66,7 @@ class HomeController extends Controller
                 $data['listType'] = Type::all()->toArray();
                 $data['selectType'] = $newType;
                 $data['allowHeadBoard'] = false;
+                $data['allowBottom'] = false;
 
                 return view('FE.home', $data);
                 break;
@@ -67,6 +80,7 @@ class HomeController extends Controller
         }
         $req->merge([
             'user_id' => Auth::user()->id,
+            'create_at' => time(),
         ]);
         
         if ($req->submit == 'insert') {
@@ -105,6 +119,7 @@ class HomeController extends Controller
                 $arrayAddress = [];
                 $arrayAddress['address'] = $address[$i];
                 $arrayAddress['price'] = $price[$i];
+                $arrayAddress['user_id'] = Auth::user()->id;
                 $arrayIdAddress[] = Address::create($arrayAddress)->id;
             }
         }

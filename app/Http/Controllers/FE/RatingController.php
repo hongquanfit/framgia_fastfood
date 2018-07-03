@@ -9,23 +9,37 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Model\Food;
 use App\Model\Rate;
 use App\Model\Comment;
+use App\Model\Address;
+use App\Model\AddressRate;
 
 class RatingController extends Controller
 {
     public function rateFood(Request $req)
     {
         $ss = Auth::user();
-        $food = Food::find($req->foodId);
-        $change = $food->users()->sync([
+        if ($req->voteType == 'food') {
+            $table = Food::find($req->toRateItem);
+            $this->processPostMethod('Rate_' . $req->rate, $req->toRateItem, Auth::user()->id);
+        } else {
+            $table = Address::find($req->toRateItem);
+        }
+        
+        $change = $table->rates()->syncWithoutDetaching([
             $ss->id => [
                 'score' => $req->rate,
-                'time' => time()
+                'time' => time(),
             ],
         ]);
-        $allScore = Rate::where('food_id', $req->foodId)->get();
-        $food->total_score = $allScore->sum('score');
-        $food->rate_times = count($allScore);
-        $food->save();
+
+        if ($req->voteType == 'food') {
+            $allScore = Rate::where('food_id', $req->toRateItem)->get();
+        } else {
+            $allScore = AddressRate::where('address_id', $req->toRateItem)->get();
+        }
+        
+        $table->total_score = $allScore->sum('score');
+        $table->rate_times = count($allScore);
+        $table->save();
 
         $returnArray = [
             'total_score' => $allScore->sum('score'),
@@ -40,15 +54,15 @@ class RatingController extends Controller
         }
     }
 
-    public function comment(Request $req)
+    public function addFavorite(Request $req)
     {
-        $req->merge([
-            'food_id' => $req->foodId,
-            'time' => time(),
-            'user_id' => Auth::user()->id,
-        ]);
-        $result = Comment::create($req->all())->wasRecentlyCreated;
+        $food = Food::find($req->id);
+        if ($req->type == 'like') {
+            $rs = $food->favorites()->detach(Auth::user()->id);
+        } else {
+            $rs = $food->favorites()->syncWithoutDetaching(Auth::user()->id);
+        }
 
-        return (int) $result;
+        return $rs;
     }
 }

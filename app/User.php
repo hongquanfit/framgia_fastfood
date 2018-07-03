@@ -40,6 +40,11 @@ class User extends Authenticatable
 
     public function foods()
     {
-        return $this->belongsToMany(App\Model\Role::class, 'rates');
+        return $this->belongsToMany(App\Model\Role::class);
+    }
+
+    public function addresses()
+    {
+        return $this->belongsToMany(App\Model\Address::class, 'address_rates');
     }
 }

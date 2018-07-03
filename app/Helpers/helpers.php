@@ -59,7 +59,7 @@ function renderStar($score, $times)
 
 function checkCharacter($word)
 {
-    $matched = preg_match('/[^A-Za-z0-9]+/', $word) ? false : true;
+    $matched = preg_match('/[^A-Za-z0-9 ]+/', $word) ? false : true;
 
     return $matched;
 }

@@ -3,6 +3,7 @@
 return [
     
     'imagesUrl' => 'public/images',
+    'limitHomepage' => 13,
     /*
     |--------------------------------------------------------------------------
     | Application Name

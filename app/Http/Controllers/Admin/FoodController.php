@@ -10,11 +10,14 @@ use App\Model\Type;
 use App\Model\FoodStatus;
 use App\Model\Image;
 use App\Model\FoodType;
+use App\Model\Address;
+use App\Model\Homepage;
 
 class FoodController extends Controller
 {
     public function getListFood()
     {
+        $homepage = Homepage::getOptions();
         $food = Food::orderBy('total_score', 'DESC')->with([
             'types',
             'addresses',
@@ -26,6 +29,7 @@ class FoodController extends Controller
         $data['listType'] = Type::all();
         $data['listStatus'] = FoodStatus::all();
         $data['listFood'] = $food;
+        $data['homepageOptions'] = $homepage;
 
         return view('Admin.Food', $data);
     }
@@ -96,8 +100,10 @@ class FoodController extends Controller
             $food->save();
         }
         catch (ModelNotFoundException $e) {
+
             return 0;
         }
+
         return 1;
     }
 
@@ -137,5 +143,38 @@ class FoodController extends Controller
         $data['listFood'] = $food->get()->toArray();
 
         return view('Admin.Food', $data);
+    }
+
+    public function getAddress(Request $req)
+    {
+        $listAddress = Food::where('id', $req->food_id)->with('addresses')->get()->toArray();
+
+        return json_encode($listAddress);
+    }
+
+    public function editAddress(Request $req)
+    {
+        try {
+            $address = Address::findOrFail($req->id);
+        } catch (ModelNotFoundException $e) {
+            return 0;
+        }
+
+        if ($req->hasFile('avatar')) {
+            $ava = $req->file('avatar');
+            $name = $ava->getClientOriginalName();
+            $name = time() . '_' . $name;
+            $ava->move(config('app.imagesUrl'), $name);
+            $updateArr = $req->all();
+            unset($updateArr['avatar']);
+            $updateArr['avatar'] = $name;
+            $affected = $address->update($updateArr);
+        } else {
+            $address->address = $req->address;
+            $address->price = $req->price;
+            $affected = $address->save();
+        }
+
+        return (int) $affected;
     }
 }

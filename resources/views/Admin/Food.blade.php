@@ -24,7 +24,7 @@
                         </div>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <button class="btn btn-default btn-75" data-toggle="collapse" data-target="#demo1" aria-expanded="true">{{ __('rating') }}</button>
+                        <button class="btn btn-default btn-75" data-toggle="collapse" data-target="#demo1" aria-expanded="true">{{ __('rate') }}</button>
 
                         <div id="demo1" class="collapse mb-3 in" aria-expanded="true">
                             @php 
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="col-lg-12 mb-3">
-                        <button class="btn btn-default btn-75" data-toggle="collapse" data-target="#demo2" aria-expanded="true">{{ __('status') }}<</button>
+                        <button class="btn btn-default btn-75" data-toggle="collapse" data-target="#demo2" aria-expanded="true">{{ __('status') }}</button>
 
                         <div id="demo2" class="collapse mt-3 in" aria-expanded="true">
                         @foreach($listStatus as $k => $status)
@@ -107,8 +107,9 @@
                                     </div>
                                 </td>
                                 <td class="text-center">
-                                    <button class="btn btn-sm btn-info" data-toggle-tooltip="tooltip" title="More Info"><i class="fa fa-info"></i></button>
+                                    <button type="button" data-toggle="modal" data-target="#moreInfoModal" data-toggle-tooltip="tooltip" title="{{ __('info') }}" class="btn btn-sm btn-info food-info" value="{{ $food['id'] }}"><i class="fa fa-info"></i></button>
                                     <button class="btn btn-sm btn-danger" data-toggle-tooltip="tooltip" title="Destroy"><i class="glyphicon glyphicon-remove"></i></button>
+                                    <a href="{{ url('details') }}/{{ str_slug($food['food']) . '_' . $food['id'] }}" target="_blank" class="btn btn-sm btn-default" data-toggle-tooltip="tooltip" title="{{ __('details') }}"><i class="fa fa-arrow-right"></i></a>
                                 </td>
                             </tr>
                         @endforeach
@@ -119,6 +120,24 @@
                 <div class="col-md-10">
                     
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="moreInfoModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+            
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal" id="chooseItemModal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+            
             </div>
         </div>
     </div>

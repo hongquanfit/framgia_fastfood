@@ -25,7 +25,7 @@
     "order": "Order",
     "type": "Type",
     "inUse": "In Use",
-    "option": "Order",
+    "options": "Options",
     "status": "Status",
     "warningRemoveType1": "This action will remove type info from ",
     "warningRemoveType2": " foods product",
@@ -56,8 +56,15 @@
     "details": "Details",
     "rate": "Rate",
     "comments": "Comments",
+    "addComment": "Add your comment",
     "addresses": "Addresses",
     "addAdr": "Add Address",
     "add": "Add",
-    "addedBy": "Added By"
+    "addedBy": "Added By",
+    "noVote": "Has no vote",
+    "loginToComment": "Please login to add some comment!",
+    "deleteItem": "Delete this item",
+    "info": "More Info",
+    "setupHomepage": "Set up Homepage",
+    "setupTitle": "Setup Homepage"
 }
