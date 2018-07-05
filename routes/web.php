@@ -15,6 +15,8 @@ Route::get('/', 'FE\HomeController@index');
 Route::get('/details/{info?}', 'FE\DetailsController@show');
 
 Route::get('/search/{by?}/{id?}/', 'FE\HomeController@searchByType');
+Route::get('/find/{name?}/', 'FE\HomeController@findItem');
+Route::get('/show/{type?}/{rate?}/{status?}', 'FE\HomeController@showAll');
 //login
 Route::get('/login', 'LoginController@showLogin');
 Route::post('/login', 'LoginController@login')->name('doLogin');
@@ -48,6 +50,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
         Route::get('/sort/{type?}/{rate?}/{status?}', 'Admin\FoodController@sortBy');
         Route::post('/getAddress', 'Admin\FoodController@getAddress');
         Route::post('/editAddress', 'Admin\FoodController@editAddress');
+        Route::get('/delItem/{foodId?}/{adrId?}', 'Admin\FoodController@deleteItem');
+        Route::get('/getFoodNutrition/{id?}', 'Admin\FoodController@getFoodNutrition');
+        Route::post('/changeNutrition', 'Admin\FoodController@changeNutrition')->name('admin.food.changeNutrition');
     });
 
     Route::group(['prefix' => 'setup'], function(){
@@ -64,4 +69,5 @@ Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
     Route::post('/addFavorite', 'FE\RatingController@addFavorite');
     Route::post('/addAdr', 'FE\DetailsController@addAddress')->name('user.addAdr');
     Route::post('/addComment', 'FE\DetailsController@addComment');
+    Route::get('/detectIngredient/{name?}', 'FE\HomeController@detectIngredient');
 });

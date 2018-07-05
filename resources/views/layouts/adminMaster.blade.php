@@ -105,14 +105,14 @@
 <script src="{{ asset('public/assets/select2/dist/js/select2.min.js') }}"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/plugins.js"></script>
 <script type="text/javascript" src="{{asset('public')}}/js/actions.js"></script>
-@if(session('success'))
+@if(session('messages'))
 <script type="text/javascript">
     $(document).ready(function(){
         var html = `
-            <div class="col-md-2 mt-5 text-center notification noti-success">
+            <div class="col-md-2 mt-5 text-center notification noti-{{ session('messages')['type'] }}">
                 <p class="mt-3">
                     <i class="fa fa-check"></i>
-                    <b id="notiMessage">This item has been remove!</b>
+                    <b id="notiMessage">{{ session('messages')['message'] }}!</b>
                 </p>
             </div>
         `;

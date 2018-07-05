@@ -15,6 +15,7 @@
     "letSee": "Let see what can we bring you. First, what do you want to choose?",
     "foundZero": "Sorry! We found nothing!",
     "youShouldChoose": "You should choose some types so we could find something for you.",
+    "youShouldChoose2": "Tell me which rating you want to choose so we could find something for you.",
     "suggestUsTitle": "Suggest us something you know please!",
     "suggest": "Suggest",
     "specialLetterDetected": "You have entered a unacceptable letter. Please try again!",
@@ -66,5 +67,7 @@
     "deleteItem": "Delete this item",
     "info": "More Info",
     "setupHomepage": "Set up Homepage",
-    "setupTitle": "Setup Homepage"
+    "setupTitle": "Setup Homepage",
+    "recommentAutoCaculate": "We will auto recommend and caculate total calorie content for you by what ingredients have in the food you typed, but it might not correct at all so you should choose it your self. Leave it blank if you don't know",
+    "needBmi": "We will caculate the calorie enough for you by BMI score. Let us know your"
 }

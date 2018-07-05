@@ -90,10 +90,26 @@
                                         <label>{{ __('foodTypes') }}:</label>
                                         <br>
                                         {!! Form::select('food_type[]', $selectType, null, ['class' => 'form-control select2', 'id' => 'select2FoodType', 'multiple' => true]) !!}
+
                                     </div>
                                     <div class="form-group" id="description">
                                         <label>{{ __('description') }}:</label>
                                         <textarea class="form-control" name="description" cols="30" rows="2" placeholder="{{ __('fDescriptionHolder') }}"></textarea>
+                                    </div>
+                                    <div class="form-group" id="Ingredient">
+                                        <label>{{ __('Ingredient') }}:</label>
+                                        <!-- vi em phai them attribute vao the option nen khong dung collective duoc -->
+                                        <select class="form-control select2" name="nutrition[]" id="select2Nutri" multiple="true">
+                                            @foreach($listNutri as $item)
+                                                <option value="{{ $item['id'] }}" data-volume="{{ $item['calorie'] }}">{{ $item['name'] }}</option>
+                                            @endforeach
+                                        </select>
+                                        <small class="text-primary">Calorie in 100 gam / 1 item</small>
+                                    </div>
+                                    <div class="form-group" id="recommentAutoCaculate">
+                                        <label>{{ __('Calorie') }}:</label>
+                                        <input type="number" name="total_calorie" id="caculateCalorie" class="form-control btn-50">
+                                        <small class="text-info">{{ __('recommentAutoCaculate') }}</small>
                                     </div>
                                     <div class="form-group" id="groupAddress">
                                         <div class="group-address mb-2">
@@ -129,29 +145,118 @@
                     <div class="modal-body">
                         <div class="row" id="groupButtonChooseFood">
                             <div class="col-md-4">
-                                <img class="mx-auto d-block img-fluid" src="https://cdn0.iconfinder.com/data/icons/kameleon-free-pack-rounded/110/Food-Dome-512.png" alt="">
+                                <img class="mx-auto d-block img-fluid" src="{{ asset('public/images/1462234361-thit-cho-la-mo_TQEL.jpg') }}" alt="">
                             </div>
                             <div class="col-md-8">
                                 <div class="col-md-12" id="chooseGroup">
                                     <h4 class="text-info">{{ __('letSee') }}</h4>
-                                    <p class="mt-lg-4"><button name="allRandom" class="btn btn-outline-warning btn-max allRandom">{{ __('allrandom') }}</button></p>
-                                    <p><button name="openType" class="btn btn-outline-success btn-max">{{ __('choose1') }}</button></p>
+                                    <p class="mt-lg-4">
+                                        <button name="allRandom" class="btn btn-outline-primary btn-max allRandom" val="allrandom">{{ __('allrandom') }}</button>
+                                    </p>
+                                    <p>
+                                        <button name="openType" class="btn btn-outline-success btn-max openGroupChooseOptions" data-open-target="#chooseFoodType">{{ __('choose1') }}</button>
+                                    </p>
+                                    <p>
+                                        <button name="openStar" class="btn btn-outline-warning btn-max openGroupChooseOptions" data-open-target="#chooseFoodRating">{{ __('Choose by rating') }}</button>
+                                    </p>
+                                    <p>
+                                        <button name="byCalorie" class="btn btn-outline-info btn-max openGroupChooseOptions" data-open-target="#chooseBMI">{{ __('Choose by BMI') }}</button>
+                                    </p>
+                                    @if(Auth::user())
+                                    <p>
+                                        <button name="fromFavorite" class="btn btn-outline-danger btn-max allRandom" value="fromFavorite">{{ __('Choose from favorite list') }}</button>
+                                    </p>
+                                    @else
+                                    <p>
+                                        <a href="{{ url('login') }}" class="btn btn-outline-danger btn-max">{{ __('Random from your favorite list') }}</a>
+                                    </p>
+                                    @endif
+                                </div>
+                                <div class="col-md-12 hide" id="chooseFoodRating">
+                                    <h4 class="text-info">{{ __('youShouldChoose2') }}</h4>
+                                    <div class="row mt-4 p-3" id="groupFoodRating">
+                                    @for($i = 0; $i < 5; $i++)
+                                        <label class="control-label col-md-4 mb-4 p-0">
+                                            <input class="icheckbox suggest-by-star take-this" type="checkbox" value="{{ 5 - $i }}">
+                                            {{ 5 - $i }} <i class="fa fa-star"></i>
+                                        </label>
+                                    @endfor
+                                    </div>
+                                    <div class="col-md-12 mt-2 p-0 allowMoreOptionArea">
+                                        
+                                    </div>
+                                    <div class="col-md-12 p-0">
+                                        <button class="btn btn-info btn-outline-primary btn-max mb-3 btn-findFoodRandom" value="randomWithStar">{{ __('Random with star you choose') }}</button>
+                                        <button class="btn btn-info btn-outline-danger btn-max mb-3 btn-findFood" value="bystar">{{ __('Let me see all items with this rate') }}</button>
+                                        <div class="errorNotChoose"></div>
+                                    </div>
                                 </div>
                                 <div class="col-md-12 hide" id="chooseFoodType">
+                                    <div class="parentOfAreaMoreOption">
+                                        <div class="row mt-2 p-3 collapse" id="chooseFoodTypeMoreOptions">
+                                            <label class="control-label col-md-4 mb-4 p-0">
+                                                <input class="icheckbox" type="checkbox" name="moreOptionWithStar" value="">
+                                                With star
+                                            </label>
+                                            <label class="control-label col-md-4 mb-4 p-0">
+                                                <input class="icheckbox" type="checkbox" name="moreOptionWithFavorite" value="">
+                                                In favorite list
+                                            </label>
+                                        </div>
+                                    </div>
                                     <h4 class="text-info">{{ __('youShouldChoose') }}</h4>
                                     <div class="row mt-4 p-3" id="groupFoodType">
                                         @foreach($listType as $item)
                                         <label class="control-label col-md-4 mb-4 p-0">
-                                            <input class="icheckbox" type="checkbox" value="{{ $item['id'] }}">
+                                            <input class="icheckbox take-this" type="checkbox" value="{{ $item['id'] }}">
                                             {{ $item['types'] }}
                                         </label>
                                         @endforeach
                                     </div>
+                                    <div class="col-md-12 mt-2 p-0 allowMoreOptionArea">
+                                        
+                                    </div>
                                     <div class="col-md-12 p-0">
-                                        <button name="findFoodRandomWithType" class="btn btn-info btn-outline-primary btn-max mb-3">{{ __('choose2') }}</button>
-                                        <button name="findFood" class="btn btn-info btn-outline-danger btn-max mb-3">{{ __('choose2') }}</button>
-                                        <div id="errorNotChoose"></div>
-                                        <a href="javascript:void(0)" id="goBack"><i class="fa fa-arrow-left"></i> {{ __('goback') }}</a>
+                                        <button class="btn btn-info btn-outline-primary btn-max mb-3 btn-findFoodRandom" value="withtype">{{ __('choose2') }}</button>
+                                        <button class="btn btn-info btn-outline-danger btn-max mb-3 btn-findFood" value="onlytype">{{ __('choose2') }}</button>
+                                        <div class="errorNotChoose"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12 hide outside-parent" id="chooseBMI">
+                                    <h4 class="text-info">{{ __('needBmi') }}:</h4>
+                                    <div class="row mt-3 p-3">
+                                        <div class="col-md-3 pr-0">
+                                            <label>{{ __('Sex') }}</label>
+                                            <br>
+                                            <input class="icheckbox" name="sex" type="radio" value="Male">
+                                            Male
+                                            <br>
+                                            <input class="icheckbox" name="sex" type="radio" value="Female">
+                                                Female
+                                        </div>
+                                        <div class="col-md-3 pr-0">
+                                            <label>{{ __('Height') }}</label>
+                                            <input type="number" class="form-control" placeholder="cm" name="heightBMI">
+                                        </div>
+                                        <div class="col-md-3 pr-0">
+                                            <label>{{ __('Weight') }}</label>
+                                            <input type="number" class="form-control" placeholder="kg" name="weightBMI">
+                                        </div>
+                                        <div class="col-md-3 pr-0">
+                                            <label>{{ __('Age') }}</label>
+                                            <input type="number" class="form-control" placeholder="kg" name="age">
+                                        </div>
+                                        <div class="col-md-12 text-center mt-2" id="returnBMIScore">
+                                            
+                                        </div>
+                                        <div class="col-md-12 mt-2 p-0 allowMoreOptionArea">
+                                            
+                                        </div>
+                                        <div class="col-md-12 mt-4 p-0">
+                                            <button class="btn btn-info btn-outline-primary btn-max mb-3 btn-findFoodRandom" value="withCalorie">{{ __('Random with your BMI options') }}</button>
+                                            <button class="btn btn-info btn-outline-danger btn-max mb-3 btn-findFood" value="fullitemcalorie">{{ __('Let me see all item with BMI score') }}</button>
+                                            <div class="errorNotChoose"></div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
