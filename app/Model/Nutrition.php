@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Nutrition extends Model
 {
     public $timestamps = false;
+    protected $table = 'nutritions';
     protected $fillable = [
     	'name', 
     	'calorie', 
@@ -19,6 +20,6 @@ class Nutrition extends Model
 
     public function foods()
     {
-        return $this->belongsToMany(App\Model\Food::class);
+        return $this->belongsToMany(Food::class);
     }
 }

@@ -18,7 +18,7 @@
                     @endphp
                     @foreach($headItem['types'] as $k => $v)
                         {{ $v['types'] }}
-                        @if($c < count($headItem['types'])-1)
+                        @if($c < count($headItem['types']) - 1)
                             /
                         @endif
                         @php 
@@ -28,13 +28,43 @@
                     </small></p>
                     <p><h1 class="food-title">{{ $headItem['food'] }}</h1></p>
                     <p>{{ $headItem['description'] }}</p>
-                    <p id="star1" class="starrr">
-                    @foreach($headItem['rateStar'] as $s)
-                        <i class="fa fa-{{ $s }} mr-1"></i>
-                    @endforeach
-                        <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i></p>
+                    <p class="mb-0 star-line">
+                        @if(Auth::user())
+                        <span class="vote-frame" data-vote-item="{{ $headItem['id'] }}">
+                            <span class="vote-frame-main">
+                        @foreach ($headItem['rateStar'] as $s)
+                            <i class="fa fa-{{ $s }} mr-1"></i>
+                        @endforeach
+                            </span>
+                            <span class="vote-frame-o-star hide">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fa fa-star-o mr-1 vote-star" data-vote-type="food" level="{{ $i + 1 }}"></i>
+                            @endfor
+                            </span>
+                        </span>
+                        @else
+                        <a class="vote-frame" href="{{ url('/login') }}">
+                            <span class="vote-frame-main">
+                            @foreach ($headItem['rateStar'] as $s)
+                                <i class="fa fa-{{ $s }} mr-1"></i>
+                            @endforeach
+                            </span>
+                            <span class="vote-frame-o-star hide">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fa fa-star-o mr-1" level="{{ $i + 1 }}"></i>
+                            @endfor
+                            </span>
+                        </a>
+                        @endif
+                        <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i>
+                    </p>
                     <p class="comment-line"><a href="{{ url('/details/') }}/{{ str_slug($headItem['food']) }}_{{ $headItem['id'] }}#commentSection"><i class="fa fa-comments-o mr-3"></i> {{ $headItem['countComment'] }} {{ __('comments') }}</a></p>
-                    <p class="price-line font-16"><i class="fa fa-money mr-3 "></i> {{ $headItem['price'] }} VND</p>
+                    <p class="price-line font-16"><i class="fa fa-money mr-3 "></i> {{ $headItem['price'] }}</p>
+                    @if(Auth::user())
+                    <p class="favorite-line"><span class="favorite-icon" id="{{ $headItem['id'] }}" data-like="{{ $headItem['favorites'] ? 'like' : 'unlike' }}"><i class="fa fa-heart{{ $headItem['favorites'] ? ' text-danger' : '-o' }}"></i></span> {{ $headItem['favorites'] ? __('You liked this') : __('Add to favorite') }}</p>
+                    @else
+                    <p class="favorite-line"><a href="{{ url('/login') }}"><i class="fa fa-heart-o"></i> {{ __('Add to favorite') }}</a></p>
+                    @endif  
                 </div>
             </div>
         </div>
@@ -93,7 +123,7 @@
 
                             @if(Auth::user())
                                 @if(Auth::user()->role_id)
-                                <p class="text-center mb-0"><a href="" class="btn btn-outline-danger btn-sm">{{ __('deleteItem') }}</a></p>
+                                <p class="text-center mb-0"><a href="{{ url('admin/food/delItem') }}/{{ $headItem['id'] }}/{{ $address['id'] }}" class="btn btn-outline-danger btn-sm">{{ __('deleteItem') }}</a></p>
                                 @endif
                             @endif
                         </div>

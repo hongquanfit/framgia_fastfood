@@ -38,9 +38,9 @@ class DetailsController extends Controller
 
             if ($adr) {
                 if (count($adr) == 1) {
-                    $food[$key]['price'] = $adr[0]['price'];
+                    $food[$key]['price'] = number_format($adr[0]['price'], 0) . ' VND';
                 } else {
-                    $food[$key]['price'] = number_format($adr[0]['price'], 0) . ' VND - ' . number_format($adr[count($adr) - 1]['price'], 0);
+                    $food[$key]['price'] = number_format($adr[0]['price'], 0) . ' VND - ' . number_format($adr[count($adr) - 1]['price'], 0) . ' VND';
                 }
             } else {
                 $food[$key]['price'] = '???';
@@ -133,10 +133,6 @@ class DetailsController extends Controller
 
     public function addComment(Request $req)
     {
-        if (!checkCharacter($req->comment)) {
-            return '';
-        }
-
         $req->merge([
             'user_id' => Auth::user()->id,
             'time' => time(),

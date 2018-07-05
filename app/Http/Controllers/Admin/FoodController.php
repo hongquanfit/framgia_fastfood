@@ -36,20 +36,16 @@ class FoodController extends Controller
 
     public function editName(Request $req)
     {
-        if (checkCharacter($req->name)) {
-            try {
-                $food = Food::find($req->id);
-            } catch (Exception $e) {
-                return 0;
-            }
-
-            $food->food = $req->name;
-            $food->save();
-
-            return 1;
-        } else {
+        try {
+            $food = Food::find($req->id);
+        } catch (Exception $e) {
             return 0;
         }
+
+        $food->food = $req->name;
+        $food->save();
+
+        return 1;
     }
 
     public function changeAvatar(Request $req)
@@ -90,6 +86,27 @@ class FoodController extends Controller
             return 0;
         }
         return 1;
+    }
+
+    public function deleteItem($foodId, $adrId)
+    {
+        try {
+            $food = Food::find($foodId);
+            $food->addresses()->detach($adrId);
+        } catch (ModelNotFoundException $e) {
+            $msg = [
+            'type' => 'error',
+            'message' => __('Something wrong happened!'),
+        ];
+
+            return back()->with('messages', $msg);
+        }
+        $msg = [
+            'type' => 'success',
+            'message' => __('Address has been removed!'),
+        ];
+
+        return back()->with('messages', $msg);
     }
 
     public function changeStatus(Request $req)
@@ -176,5 +193,38 @@ class FoodController extends Controller
         }
 
         return (int) $affected;
+    }
+
+    public function getFoodNutrition($id = null)
+    {
+        $food = Food::where('id', $id)->with('nutritions')->get()->toArray();
+        if ($food) {
+            return json_encode($food);
+        } else {
+            return 0;
+        }
+    }
+
+    public function changeNutrition(Request $req)
+    {
+        $food = Food::findOrFail($req->food_id);
+        foreach ($req->nutrition as $key => $value) {
+            $change = $food->nutritions()->syncWithoutDetaching([
+                $value => [
+                    'volume' => $req->gram[$key],
+                    'calorie' => $req->hd_toCaculateCalo[$key],
+                ],
+            ]);
+        }
+
+        $food->total_calorie = $req->hd_totalCaloToSave;
+        $food->save();
+
+        $msg = [
+            'type' => 'success',
+            'message' => __('Saved change!'),
+        ];
+
+        return back()->with('messages', $msg);
     }
 }

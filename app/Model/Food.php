@@ -11,9 +11,11 @@ class Food extends Model
         'food', 
         'description', 
         'city', 
-        'total_score', 
+        'total_score',
+        'total_calorie',
         'rate_times',
         'user_id',
+        'create_at',
     ];
 
     public function images()
@@ -48,7 +50,7 @@ class Food extends Model
 
     public function nutritions()
     {
-        return $this->belongsToMany(Nutrition::class);
+        return $this->belongsToMany(Nutrition::class, 'food_nutritions')->withPivot('volume', 'calorie');
     } 
 
     public function rates()
@@ -71,10 +73,12 @@ class Food extends Model
             'foodStatus',
             'foodUser',
             'comments',
-        ]);
+        ])->with(['favorites' => function($query){
+            $query->where('user_id', auth()->user() ? auth()->user()->toArray()['id'] : 'nobody');
+        }]);
     }
 
-    public function scopeToGetListFood($query, $orderCol, $orderType, $byList = [])
+    public function scopeToGetListFood($query, $orderCol, $orderType, $byList = [], $take = 13)
     {
         if ($byList) {
             $query = $query->whereIn('id', $byList);
@@ -83,6 +87,19 @@ class Food extends Model
         return $query->whereHas('foodStatus', function($query){
                         $query->where('status', 'Displaying');
                     })->orderBy($orderCol, $orderType)
+                    ->with('types:types')
+                    ->with('addresses')
+                    ->with('images')
+                    ->with(['favorites' => function($query){
+                        $query->where('user_id', auth()->user() ? auth()->user()->toArray()['id'] : 'nobody');
+                    }])
+                    ->take($take)
+                    ->get();
+    }
+
+    public function scopeFoodInfo($query, $orderCol, $orderType)
+    {
+        return $query->orderBy($orderCol, $orderType)
                     ->with('types:types')
                     ->with('addresses')
                     ->with('images')

@@ -9,6 +9,7 @@ use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use App\Model\Type;
 use App\Model\History;
+use App\Model\Nutrition;
 
 class Controller extends BaseController
 {
@@ -22,12 +23,15 @@ class Controller extends BaseController
             ]);
         }
 
-    	$type = Type::all()->toArray();
+        $type = Type::all()->toArray();
         foreach ($type as $key => $value) {
             $newType[$value['id']] = $value['types'];
         }
+
+        $nutri = Nutrition::all()->toArray();
         
-		view()->share('selectType', $newType);
+        view()->share('selectType', $newType);
+        view()->share('listNutri', $nutri);
     }
 
     public function processGetMethod($food_id, $auth)
