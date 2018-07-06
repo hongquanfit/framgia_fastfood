@@ -56,10 +56,13 @@
                             </span>
                         </a>
                         @endif
-                        <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i>
+                        <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : round($headItem['total_score']/$headItem['rate_times'], 2) }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i>
                     </p>
                     <p class="comment-line"><a href="{{ url('/details/') }}/{{ str_slug($headItem['food']) }}_{{ $headItem['id'] }}#commentSection"><i class="fa fa-comments-o mr-3"></i> {{ $headItem['countComment'] }} {{ __('comments') }}</a></p>
                     <p class="price-line font-16"><i class="fa fa-money mr-3 "></i> {{ $headItem['price'] }}</p>
+                    <p class="calorie-line text-danger">
+                        <i class="fa fa-sun-o"></i> {{ $headItem['total_calorie'] }} {{ __('Kcal') }}
+                    </p>
                     @if(Auth::user())
                     <p class="favorite-line"><span class="favorite-icon" id="{{ $headItem['id'] }}" data-like="{{ $headItem['favorites'] ? 'like' : 'unlike' }}"><i class="fa fa-heart{{ $headItem['favorites'] ? ' text-danger' : '-o' }}"></i></span> {{ $headItem['favorites'] ? __('You liked this') : __('Add to favorite') }}</p>
                     @else

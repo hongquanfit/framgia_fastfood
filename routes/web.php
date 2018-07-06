@@ -61,8 +61,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'isAdmin'], function(){
 
 });
 //Frontend
-
-
 Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
     Route::post('/suggestfood', 'FE\HomeController@doSuggest')->name('suggest');
     Route::post('/rating', 'FE\RatingController@rateFood');
@@ -70,4 +68,10 @@ Route::group(['prefix' => 'user', 'middleware' => 'isAdmin'], function(){
     Route::post('/addAdr', 'FE\DetailsController@addAddress')->name('user.addAdr');
     Route::post('/addComment', 'FE\DetailsController@addComment');
     Route::get('/detectIngredient/{name?}', 'FE\HomeController@detectIngredient');
+    Route::post('/comment', 'FE\RatingController@comment');
+});
+
+Route::group(['prefix' => 'profile', 'middleware' => 'isAdmin'], function(){
+    Route::get('/', 'FE\UserController@showProfile');
+    Route::post('/edit', 'FE\UserController@editProfile')->name('profile.edit');
 });

@@ -66,14 +66,16 @@ class HomeController extends Controller
         if ($idStatus) {
             $food = $food->whereIn('food_status_id', $idStatus);
         }
-        $food = $food->toGetListFood('total_score', 'DESC', [], 9999999)->toArray();
-        $food = $this->renderArrayFood($food);
+        $col = sortColumnRender($_GET);
+        $food = $food->toGetListFood(columnSort($col['col']), $col['val'] ? orderSort($col['val']) : 'DESC', [], 9999999)->toArray();
+        $food = $this->renderArrayFood($food); 
         $data['listItem'] = $food;
         $data['listType'] = Type::all()->toArray();
         //options
         $data['typeValue'] = is_array($idType) ? $idType : [$idType];
         $data['rateScore'] = is_array($scoreRate) ? $scoreRate : [$scoreRate];
         $data['statusValue'] = is_array($idStatus) ? $idStatus : [$idStatus];
+        $data['setActiveSort'] = $_GET;
         $data['allowHeadBoard'] = false;
         $data['allowListPanel'] = false;
         $data['allowBottom'] = false;
@@ -85,7 +87,6 @@ class HomeController extends Controller
 
     public function renderArrayFood($food)
     {
-        // pr($food);
         foreach ($food as $key => $item) {
             $food[$key]['rateStar'] = renderStar($item['total_score'], $item['rate_times']);
             $food[$key]['avrRate'] = ($item['rate_times'] == 0) ? 0 : $item['total_score'] / $item['rate_times'];
@@ -104,6 +105,7 @@ class HomeController extends Controller
 
         return $food;
     }
+    
     public function findItem($name = null)
     {
         $food = new Food;
@@ -111,9 +113,11 @@ class HomeController extends Controller
             $food = $food->where('food', 'like', "%$name%");
         }
         
-        $food = $food->toGetListFood('total_score', 'DESC', [], 999999)->toArray();
+        $col = sortColumnRender($_GET);
+        $food = $food->toGetListFood(columnSort($col['col']), $col['val'] ? orderSort($col['val']) : 'DESC', [], 9999999)->toArray();
         $food = $this->renderArrayFood($food);
         $data['listItem'] = $food;
+        $data['setActiveSort'] = $_GET;
         $data['allowHeadBoard'] = false;
         $data['allowListPanel'] = false;
         $data['allowBottom'] = false;
@@ -135,14 +139,7 @@ class HomeController extends Controller
                 break;
             case 'bystar':
                 $data['listItem'] = $this->byStar($id);
-                $data['listType'] = Type::all()->toArray();
-                $data['allowHeadBoard'] = false;
-                $data['allowBottom'] = false;
-                $data['allowFavorite'] = false;
-                $data['allowAllPanel'] = false;
-                $data['allowListPanel'] = true;
-
-                return view('FE.home', $data);
+                $data['rateScore'] = explode('_', $id);
                 break;
             case 'randomWithStar':
                 $arr = $this->byStar($id);
@@ -157,38 +154,27 @@ class HomeController extends Controller
                 return $this->withCalorie(1, $id);
                 break;
             case 'fullitemcalorie':
-                $type = Type::all()->toArray();
-                foreach ($type as $key => $value) {
-                    $newType[$value['id']] = $value['types'];
-                }
                 $data['listItem'] = $this->withCalorie(0, $id);
-                $data['listType'] = Type::all()->toArray();
-                $data['selectType'] = $newType;
-                $data['allowHeadBoard'] = false;
-                $data['allowBottom'] = false;
-                $data['allowFavorite'] = false;
-                $data['allowAllPanel'] = true;
-                $data['allowListPanel'] = false;
-
-                return view('FE.home', $data);
                 break;
             case 'onlytype':
-                $type = Type::all()->toArray();
-                foreach ($type as $key => $value) {
-                    $newType[$value['id']] = $value['types'];
-                }
                 $data['listItem'] = $this->onlyType(0, $id);
-                $data['listType'] = Type::all()->toArray();
-                $data['selectType'] = $newType;
-                $data['allowHeadBoard'] = false;
-                $data['allowBottom'] = false;
-                $data['allowFavorite'] = false;
-                $data['allowAllPanel'] = true;
-                $data['allowListPanel'] = false;
-
-                return view('FE.home', $data);
+                $data['typeValue'] = explode('_', $id);
                 break;
         }
+        $type = Type::all()->toArray();
+        foreach ($type as $key => $value) {
+            $newType[$value['id']] = $value['types'];
+        }
+        $data['listType'] = Type::all()->toArray();
+        $data['selectType'] = $newType;        
+        $data['setActiveSort'] = $_GET;
+        $data['allowHeadBoard'] = false;
+        $data['allowBottom'] = false;
+        $data['allowFavorite'] = false;
+        $data['allowAllPanel'] = true;
+        $data['allowListPanel'] = false;
+
+        return view('FE.home', $data);
     }
 
     public function doSuggest(Request $req)
@@ -240,12 +226,15 @@ class HomeController extends Controller
         }
 
         $touch = $food->addresses()->attach($arrayIdAddress);
-        $findBackCalo = Nutrition::where('id', $req->nutrition)->get()->toArray();
-        $touch = $food->nutritions()->syncWithoutDetaching([
-            $req->nutrition => [
-                'calorie' => $findBackCalo[0]['calorie'],
-            ],
-        ]);
+        foreach ($req->nutrition as $key => $value) {
+            $findBackCalo = Nutrition::where('id', $value)->get()->toArray();
+            $food->nutritions()->syncWithoutDetaching([
+                $value => [
+                    'calorie' => $findBackCalo[0]['calorie'],
+                    'volume' => 100,
+                ],
+            ]);
+        }
 
         return redirect('/')->with('success', __('suggestSuccess'));
     }
@@ -256,16 +245,15 @@ class HomeController extends Controller
         $arrayId = $id ? explode('_', $id) : [];
 
         if ($arrayId) {
+            $col = sortColumnRender($_GET);
             $typeId = FoodType::whereIn('type_id', $arrayId)->get()->pluck('food_id')->toArray();
             $searched = Food::whereIn('id', $typeId)->whereHas('foodStatus', function($query){
                         $query->where('status', 'Displaying');
                     })
-                    ->foodInfo('total_score', 'DESC')
+                    ->foodInfo(columnSort($col['col']), orderSort($col['val']))
                     ->toArray();
 
-            foreach ($searched as $key => $item) {
-                $searched[$key]['rateStar'] = renderStar($item['total_score'], $item['rate_times']);
-            }
+            $searched = $this->renderArrayFood($searched);
         }
         else {
             $searched = [];
@@ -281,9 +269,10 @@ class HomeController extends Controller
 
     public function byStar($star)
     {
+        $col = sortColumnRender($_GET);
         $arrayStar = $star ? explode('_', $star) : [];
         $food = Food::whereRaw('total_score >= rate_times*' . min($arrayStar) . ' AND total_score <= rate_times*' . max($arrayStar) . ' AND total_score > 0')
-            ->foodInfo('total_score', 'DESC')
+            ->foodInfo(columnSort($col['col']), orderSort($col['val']))
             ->toArray();
         ;
         $food = $this->renderArrayFood($food);
@@ -294,8 +283,9 @@ class HomeController extends Controller
     public function withCalorie($allowRandom, $calo)
     {
         $calo = $calo / 3;
+        $col = sortColumnRender($_GET);
         $food = Food::whereBetween('total_calorie', [$calo - 100, $calo + 100])
-                ->toGetListFood('total_score', 'DESC')->toArray();
+                ->toGetListFood(columnSort($col['col']), orderSort($col['val']))->toArray();
         if (!$food) {
             return 0;
         }
@@ -311,10 +301,11 @@ class HomeController extends Controller
     }
     public function fromFavorite()
     {
+        $col = sortColumnRender($_GET);
         $favoriteFood = Favorite::where('user_id', Auth::user() ? Auth::user()->id : 'none')->get()->pluck('food_id')->toArray();
 
         if ($favoriteFood) {
-            $favoriteList = Food::toGetListFood('total_score', 'DESC', $favoriteFood)->toArray();
+            $favoriteList = Food::toGetListFood(columnSort($col['col']), orderSort($col['val']), $favoriteFood)->toArray();
         } else {
             return 0;
         }
@@ -331,7 +322,6 @@ class HomeController extends Controller
         $searched = Food::whereHas('foodStatus', function($query){
                         $query->where('status', 'Displaying');
                     })
-                    ->foodInfo('total_score', 'DESC')
                     ->toArray();
 
         $searched = $this->renderArrayFood($searched);

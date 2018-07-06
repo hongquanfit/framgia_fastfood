@@ -4,6 +4,7 @@ return [
     
     'imagesUrl' => 'public/images',
     'limitHomepage' => 13,
+    'interactionItemShow' => 4,
     /*
     |--------------------------------------------------------------------------
     | Application Name

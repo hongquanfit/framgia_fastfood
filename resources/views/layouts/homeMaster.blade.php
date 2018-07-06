@@ -39,6 +39,11 @@
                     </a>                   
                 </li>
                 <li class="mb-2">
+                    <a href="{{ url('profile') }}" class="btn btn-primary btn-lg w-100 h-100 rounded-circle" title="{{ __('Your profile') }}" data-toggle-tooltip="tooltip" data-placement="left">
+                        <i class="fa fa-user"></i>
+                    </a>                   
+                </li>
+                <li class="mb-2">
                     <button data-target="#myModal" class="btn btn-warning btn-lg w-100 h-100 rounded-circle" title="{{ __('suggest') }}" data-toggle-tooltip="tooltip" data-placement="left" data-toggle="modal">
                         <i class="fa fa-beer"></i>
                     </a>                   

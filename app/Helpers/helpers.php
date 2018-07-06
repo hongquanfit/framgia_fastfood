@@ -63,3 +63,116 @@ function checkCharacter($word)
 
     return $matched;
 }
+
+function textSort($key)
+{
+    foreach (sortCondition() as $sort) {
+        foreach ($sort['group'] as $gr) {
+            $arr[$gr['data']] = $gr['text'];
+        }
+    }
+
+    return $arr[$key];
+}
+
+function caloCaculation($calo)
+{
+    return $calo / 3;
+}
+
+function orderSort($key)
+{
+    foreach (sortCondition() as $sort) {
+        foreach ($sort['group'] as $gr) {
+            $arr[$gr['data']] = $gr['order'];
+        }
+    }
+    
+    return $arr[$key];
+}
+
+function columnSort($key)
+{
+    if (!$key) {
+        return 'total_score';
+    }
+
+    foreach (sortCondition() as $sort) {
+        $arr[$sort['type']] = $sort['column'];
+    }
+    
+    return $arr[$key];
+}
+
+function sortColumnRender($req)
+{
+    $col = [];
+    if ($req) {
+        foreach ($req as $key => $value) {
+            $col['col'] = $key;
+            $col['val'] = $value;
+        }
+    } else {
+        $col['val'] = 'highRate';
+        $col['col'] = 'byRate';
+    }
+
+    return $col;
+}
+
+function sortCondition()
+{
+    return [
+        'byDate' => [
+            'name' => 'Date',
+            'type' => 'byDate',
+            'column' => 'create_at',
+            'group' => [
+                [
+                    'data' => 'newest',
+                    'text' => 'Newest',
+                    'order' => 'DESC',
+                ],
+                [
+                    'data' => 'oldest',
+                    'text' => 'Oldest',
+                    'order' => 'ASC',
+                ],
+            ],
+        ],
+        'byCalorie' => [
+            'name' => 'Calorie',
+            'type' => 'byCalorie',
+            'column' => 'total_calorie',
+            'group' => [
+                [
+                    'data' => 'low',
+                    'text' => 'Low to high',
+                    'order' => 'ASC',
+                ],
+                [
+                    'data' => 'high',
+                    'text' => 'High to low',
+                    'order' => 'DESC',
+                ],
+            ],
+        ],
+        'byRate' => [
+            'name' => 'Rate',
+            'type' => 'byRate',
+            'column' => 'total_score',
+            'group' => [
+                [
+                    'data' => 'lowRate',
+                    'text' => 'Low to high',
+                    'order' => 'ASC',
+                ],
+                [
+                    'data' => 'highRate',
+                    'text' => 'High to low',
+                    'order' => 'DESC',
+                ],
+            ],
+        ],
+    ];
+}

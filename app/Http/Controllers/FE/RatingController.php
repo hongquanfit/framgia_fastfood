@@ -65,4 +65,16 @@ class RatingController extends Controller
 
         return $rs;
     }
+
+    public function comment(Request $req)
+    {
+        $req->merge([
+            'food_id' => $req->foodId,
+            'time' => time(),
+            'user_id' => Auth::user()->id,
+        ]);
+        $result = Comment::create($req->all())->wasRecentlyCreated;
+        
+        return (int) $result;
+    }
 }

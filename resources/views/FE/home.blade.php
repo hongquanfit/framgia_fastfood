@@ -56,7 +56,7 @@
                     </span>
                 </a>
                 @endif
-                <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : $headItem['total_score']/$headItem['rate_times'] }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i>
+                <i class="ml-3 rating-line">{{ ($headItem['rate_times'] == 0) ? '0' : round($headItem['total_score']/$headItem['rate_times'],2) }} / {{ $headItem['rate_times'] }} {{ __('rate') }}</i>
             </p>
             </p>
             <p class="price-line font-16"><i class="fa fa-money mr-3 "></i> {{ $headItem['price'] }}</p>
@@ -155,7 +155,7 @@
                                     </span>
                                 </a>
                                 @endif
-                                <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
+                                <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : round($item['total_score']/$item['rate_times'], 2) }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
                             </p>
                             <small class="text-success" id="infoSaveComment_{{ $item['id'] }}"></small>
                             <p class="text-center mb-0 mt-3"><a class="btn btn-outline-info" target="_blank()" href="{{ url('/details/') }}/{{ str_slug($item['food']) }}_{{ $item['id'] }}"><i class="fa fa-map-marker"></i> {{ __('details') }}</a></p>
@@ -191,7 +191,7 @@
         <div class="card-body">
             <div class="row">
                 <div class="col-lg-3">
-                    <h4>Sorts by:</h4>
+                    <h4>Filter by:</h4>
                     <div class="col-lg-12 mb-3">
                         <button class="btn btn-default btn-75" data-toggle="collapse" data-target="#demo" aria-expanded="true">{{ __('types') }}</button>
 
@@ -227,11 +227,36 @@
                         </div>
                     </div>
                     <p class="btn-75 text-right">
-                        <button class="btn btn-sm btn-primary" name="btnSort" class="font-12">Sort <i class="fa fa-arrow-right"></i></button>
+                        <button class="btn btn-sm btn-primary" name="btnSort" class="font-12">Filter <i class="fa fa-arrow-right"></i></button>
                     </p>
                 </div>
                 <div class="col-lg-9">
                     <div class="row">
+                        <div class="col-lg-12 orders-by-border pb-2">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                @foreach(sortCondition() as $sort)
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-outline-primary dropdown-toggle" data-toggle="dropdown">
+                                           {{ __($sort['name']) }}
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            @foreach($sort['group'] as $group)
+                                            <a class="dropdown-item defineSort" data-sort-type="{{ $sort['type'] }}" data-sort-active="{{ (isset($setActiveSort[$sort['type']])) ? ($group['data'] == $setActiveSort[$sort['type']]) ? 'true' : '' : '' }}" data-sort="{{ $group['data'] }}" href="javascript:void(0)">{{ __($group['text']) }}</a>
+                                            @endforeach
+                                        </div>
+                                    </div>
+                                @endforeach
+                                </div>
+                                <div class="col-lg-6">
+                                @if ($setActiveSort)
+                                    @foreach($setActiveSort as $item)
+                                    <button value="{{ $item }}" class="btn btn-sm btn-default float-right ml-1 removeSortChoose">&times; {{ textSort($item) }}</button>
+                                    @endforeach
+                                @endif
+                                </div>
+                            </div>
+                        </div>
                     @if ($listItem)
                         @foreach ($listItem as $item)
                         <div class="col-lg-4 mt-3 list-food">
@@ -301,13 +326,12 @@
                                             </span>
                                         </a>
                                         @endif
-                                        <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
+                                        <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : round($item['total_score']/$item['rate_times'], 2) }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
                                     </p>
                                     <small class="text-success" id="infoSaveComment_{{ $item['id'] }}"></small>
                                     <p class="text-center mb-0 mt-3"><a class="btn btn-outline-info" target="_blank()" href="{{ url('/details/') }}/{{ str_slug($item['food']) }}_{{ $item['id'] }}"><i class="fa fa-map-marker"></i> {{ __('details') }}</a></p>
                               </div>
                             </div>
-                            
                         </div>
                         @endforeach
                     @else
@@ -397,7 +421,7 @@
                                         </span>
                                     </a>
                                     @endif
-                                    <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
+                                    <i class="ml-3 rating-line font-11">{{ ($item['rate_times'] == 0) ? '0' : round($item['total_score']/$item['rate_times'], 2) }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
                                 </p>
                                 <small class="text-success" id="infoSaveComment_{{ $item['id'] }}"></small>
                                 <p class="text-center mb-0 mt-3"><a class="btn btn-outline-info" target="_blank()" href="{{ url('/details/') }}/{{ str_slug($item['food']) }}_{{ $item['id'] }}"><i class="fa fa-map-marker"></i> {{ __('details') }}</a></p>
@@ -496,7 +520,7 @@
                                     </span>
                                 </a>
                                 @endif
-                                <i class="ml-3 rating-line">{{ ($item['rate_times'] == 0) ? '0' : $item['total_score']/$item['rate_times'] }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
+                                <i class="ml-3 rating-line">{{ ($item['rate_times'] == 0) ? '0' : round($item['total_score']/$item['rate_times'], 2) }} / {{ $item['rate_times'] }} {{ __('rate') }}</i></p>
                             </p>
                             <small class="text-success" id="infoSaveComment_{{ $item['id'] }}"></small>
                             <p class="text-center mb-0 mt-3"><a class="btn btn-outline-info" target="_blank()" href="{{ url('/details/') }}/{{ str_slug($item['food']) }}_{{ $item['id'] }}"><i class="fa fa-map-marker"></i> {{ __('details') }}</a></p>

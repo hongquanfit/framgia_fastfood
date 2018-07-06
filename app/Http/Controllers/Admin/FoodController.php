@@ -17,7 +17,6 @@ class FoodController extends Controller
 {
     public function getListFood()
     {
-        $homepage = Homepage::getOptions();
         $food = Food::orderBy('total_score', 'DESC')->with([
             'types',
             'addresses',
@@ -29,7 +28,7 @@ class FoodController extends Controller
         $data['listType'] = Type::all();
         $data['listStatus'] = FoodStatus::all();
         $data['listFood'] = $food;
-        $data['homepageOptions'] = $homepage;
+        $data['homepageOptions'] = false;
 
         return view('Admin.Food', $data);
     }
